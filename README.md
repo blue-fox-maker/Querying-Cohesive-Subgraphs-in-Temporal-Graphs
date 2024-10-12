@@ -15,9 +15,10 @@ You can run the program using the following command:
 ```sh
 ./src/main --help
 ```
+
 This will display the help menu:
 
-```
+```txt
 Usage: main [-h]
 
 Pisitional arguments:
@@ -29,19 +30,17 @@ Optional arguments:
 
 ## Dataset
 
-datasets are put in data/ folder. with .data
+Datasets should be placed in the `data/` directory with `.data` extension.
+The dataset file should have the following structure:
 
-The first line should be 
+1. The first line contains three integers:
 
-```
+```txt
 num_time num_vert num_edge
 ```
-
-follows by temporal edges
-
+2. Each subsequent line represents a temporal edge in the format:
+```txt
+u v t
 ```
-u1 v2 t1
-u2 v2 t2
-...
-```
-The index of verticle and timestamp should start with zero.
+
+The index of vertex and timestamp should start from zero.
