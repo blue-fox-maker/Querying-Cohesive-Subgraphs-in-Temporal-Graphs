@@ -10,7 +10,7 @@ g++ -std=c++20 -O2 src/main.cpp -o src/main
 
 ## Run the Program
 
-You can run the program using the following command:
+Once compiled, you can run the program using the following command:
 
 ```sh
 ./src/main --help
@@ -44,3 +44,4 @@ The dataset file should have the following structure:
   ```
 
 The index of vertex and timestamp should start from zero.
+An example dataset file named `contact.data` is provided in the `data/` folder.
