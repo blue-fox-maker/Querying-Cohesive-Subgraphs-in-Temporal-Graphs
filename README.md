@@ -35,12 +35,12 @@ The dataset file should have the following structure:
 
 1. The first line contains three integers:
 
-```txt
-num_time num_vert num_edge
-```
+  ```txt
+  num_time num_vert num_edge
+  ```
 2. Each subsequent line represents a temporal edge in the format:
-```txt
-u v t
-```
+  ```txt
+  u v t
+  ```
 
 The index of vertex and timestamp should start from zero.
