@@ -45,3 +45,5 @@ The dataset file should have the following structure:
 
 The index of vertex and timestamp should start from zero.
 An example dataset file named `contact.data` is provided in the `data/` folder.
+
+## Nothing
