@@ -1,5 +1,3 @@
-#include "func.hpp"
-#include "seq.hpp"
 #include <algorithm>
 #include <array>
 #include <concepts>
@@ -8,6 +6,7 @@
 #include <ranges>
 #include <tuple>
 #include <vector>
+#include "seq.hpp"
 
 // #ifdef dynamic
 // implemention
@@ -133,7 +132,7 @@ class priority_search_tree
         if (tree.empty())
             return;
         auto iter = std::ranges::min_element(data, cmp, fn::get<1>);
-        // auto iter = std::ranges::max_element(data, {}, [](const auto &x) { return std::get<1>(x); });
+        // auto iter = std::ranges::max_element(data, {}, );
         tree.root().key = std::get<0>(*iter);
         tree.root().priority = std::get<1>(*iter);
         tree.root().value = std::get<2>(*iter);
@@ -303,16 +302,10 @@ class AXYBZ_query
         auto tree = _root.get();
         while (tree)
         {
-            if (b <= tree->split) // BZ
-            {
-                // AXYB
+            if (b <= tree->split)
                 tree->axyb.query(a, b, func);
-            }
-            else if (b > tree->split) // YB
-            {
-                // AXBZ
+            else if (b > tree->split)
                 tree->axbz.query(a, b, func);
-            }
             if (b < tree->split)
                 tree = tree->lower_child_ptr.get();
             else if (b > tree->split)

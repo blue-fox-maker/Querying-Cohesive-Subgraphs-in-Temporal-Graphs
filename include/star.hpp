@@ -9,36 +9,43 @@
 static constexpr size_t invalid_index = -1;
 
 struct none {
-  friend auto operator<=>(none, none) { return std::strong_ordering::equal; }
+  friend auto operator<=>(none,none)=default;
 };
 
+template <typename T = none> struct target_edge {
+  using attr_t = T;
+  size_t target;
+  [[no_unique_address]] T attr;
+  target_edge(size_t v, auto &&...args):target(v),attr(std::forward<decltype(args)>(args)...){}
+  target_edge()=default;
+};
+template <typename T = none> struct source_edge {
+  using attr_t = T;
+  size_t source;
+  [[no_unique_address]] T attr;
+  source_edge(size_t v, auto &&...args):source(v),attr(std::forward<decltype(args)>(args)...){}
+  source_edge()=default;
+};
 template <typename T = none> struct edge {
+  using attr_t = T;
   size_t source;
   size_t target;
   [[no_unique_address]] T attr;
   edge(size_t u, size_t v, auto &&...args):source(u),target(v),attr(std::forward<decltype(args)>(args)...){}
+  edge(size_t u, const source_edge<T>& x):source(x.source),target(u),attr(x.attr){}
+  edge(size_t u, const target_edge<T>& x):source(u),target(x.target),attr(x.attr){}
+  edge()=default;
 };
-template <typename T = none> struct target_edge {
-  size_t target;
-  [[no_unique_address]] T attr;
-  target_edge(size_t v, auto &&...args):target(v),attr(std::forward<decltype(args)>(args)...){}
-};
-template <typename T = none> struct source_edge {
-  size_t source;
-  [[no_unique_address]] T attr;
-  source_edge(size_t v, auto &&...args):source(v),attr(std::forward<decltype(args)>(args)...){}
-};
+template <typename T>
+edge(size_t, size_t, T&&)->edge<T>;
 
-template <bool Cond, typename T>
-using maybe_t = std::conditional_t<Cond, T, none>;
 
 template <typename T>
 class graph_interface {
   public:
     auto neighbors(size_t i) { return std::views::concat(static_cast<T*>(this)->source_neighbors(i), static_cast<T*>(this)->target_neighbors(i));}
     size_t degree(size_t i) { 
-      if constexpr(std::ranges::sized_range<decltype(neighbors(i))>)
-        return static_cast<T*>(this)->source_degree(i)+static_cast<T*>(this)->target_degree(i);
+      return std::ranges::size(static_cast<T*>(this)->source_degree(i))+std::ranges::size(static_cast<T*>(this)->target_degree(i));
     }
     auto verts() { return std::views::iota(static_cast<T*>(this)->num_vert()); }
   protected: graph_interface() = default;
@@ -56,7 +63,7 @@ struct index_iterator {
   bool operator==(std::default_sentinel_t){ return cur == invalid_index;}
 };
 
-template <typename EA> class graph:graph_interface<graph<EA>> {
+template <typename EA> class graph:public graph_interface<graph<EA>> {
 public:
   static constexpr bool Source = true;
   static constexpr bool Target = true;
@@ -67,14 +74,14 @@ public:
 private:
   size_t _num_vert;
   std::vector<edge_t> _data;
-  [[no_unique_address]] maybe_t<Source, std::vector<size_t>> _source_entry;
-  [[no_unique_address]] maybe_t<Source, std::vector<size_t>> _source_prev;
-  [[no_unique_address]] maybe_t<Source, std::vector<size_t>> _source_next;
-  [[no_unique_address]] maybe_t<Target, std::vector<size_t>> _target_entry;
-  [[no_unique_address]] maybe_t<Source, std::vector<size_t>> _target_prev;
-  [[no_unique_address]] maybe_t<Target, std::vector<size_t>> _target_next;
-  [[no_unique_address]] maybe_t<Source && Degree, std::vector<size_t>> _source_degree;
-  [[no_unique_address]] maybe_t<Target && Degree, std::vector<size_t>> _target_degree;
+  [[no_unique_address]] std::conditional_t<Source, std::vector<size_t>, none> _source_entry;
+  [[no_unique_address]] std::conditional_t<Source, std::vector<size_t>, none> _source_prev;
+  [[no_unique_address]] std::conditional_t<Source, std::vector<size_t>, none> _source_next;
+  [[no_unique_address]] std::conditional_t<Target, std::vector<size_t>, none> _target_entry;
+  [[no_unique_address]] std::conditional_t<Source, std::vector<size_t>, none> _target_prev;
+  [[no_unique_address]] std::conditional_t<Target, std::vector<size_t>, none> _target_next;
+  [[no_unique_address]] std::conditional_t<Source && Degree, std::vector<size_t>, none> _source_degree;
+  [[no_unique_address]] std::conditional_t<Target && Degree, std::vector<size_t>, none> _target_degree;
 
   void init_entry_list(auto &entry, auto &next, auto &&proj) {
     for (auto &&[i, e] : _data | std::views::enumerate | std::views::reverse) {
@@ -118,6 +125,10 @@ public:
   }
 };
 
+template <std::ranges::range R>
+graph(size_t , R &&)->graph<typename std::ranges::range_value_t<R>::attr_t>;
+
+
 template <typename EA> 
 class spanning_forest: public graph_interface<spanning_forest<EA>> {
   std::vector<size_t> _rank;
@@ -151,17 +162,19 @@ class minimum_spanning_forest: public graph_interface<minimum_spanning_forest<EA
   std::vector<size_t> _depth; // this array is useless. I need to get rid of it
 public:
   size_t num_vert() const noexcept { return _data.size(); }
+  auto edges() const noexcept { return std::views::iota(0U,num_vert())|std::views::transform([this](size_t i){return edge{i,_data[i].target,std::ref(_data[i].attr)};});}
+  auto edges() noexcept { return std::views::iota(0U,num_vert())|std::views::transform([this](size_t i){return edge{i,_data[i].target,std::ref(_data[i].attr)};});}
   template <std::ranges::range R = std::ranges::empty_view<edge<EA>>>
   minimum_spanning_forest(size_t num_vert, R&& rng = {}):_data(num_vert),_depth(num_vert,0){
     for(size_t i = 0; i < _data.size(); i++ ) _data[i] = target_edge<EA>{i};
     for(auto&& e:rng) add_edge(e.source,e.target,e.attr);
   }
-  void add_edge(size_t u, size_t v, auto &&...attr_args) {
-    if (u==v) return ;
+  [[maybe_unused]] std::optional<size_t> add_edge(size_t u, size_t v, auto &&...attr_args) {
+    if (u==v) return std::nullopt;
     auto w = critical_edge(u,v);
     if (_depth[_data[u]] >_depth[_data[v]]) std::swap(u,v);
     if (w){
-      if (WProj{}(_data[*w].attr) < WProj{}(_data[*w].attr)) return;
+      if (WProj{}(_data[*w].attr) < WProj{}(_data[*w].attr)) return std::nullopt;
       _data[*w].target = *w;
     }
     reroot(u);
@@ -190,7 +203,7 @@ private:
         std::swap(u,v);
       if (!cur || WProj{}(_data[*cur].attr) < WProj{}(_data[*cur].attr))
         cur = u;
-      u = _data[u].target; // TODO correct?
+      u = _data[u].target;
     }
     return cur;
   }
