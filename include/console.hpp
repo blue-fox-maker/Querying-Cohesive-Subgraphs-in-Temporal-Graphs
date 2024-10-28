@@ -16,9 +16,9 @@ namespace
 {
 
 template <std::ranges::input_range R>
-inline std::string repr(const R &);
+inline std::string repr(R &&);
 template <std::ranges::random_access_range R>
-inline std::string repr(const R &);
+inline std::string repr(R &&);
 template <typename T, typename U>
 inline std::string repr(const std::pair<T, U> &);
 
@@ -70,19 +70,19 @@ inline std::string repr(const std::pair<T, U> &val)
     return "<" + repr(val.first) + ", " + repr(val.second) + ">";
 }
 template <std::ranges::input_range R>
-inline std::string repr(const R &rng)
+inline std::string repr(R &&rng)
 {
     std::string res = "{";
     for (std::string delim = ""; auto &&val : rng)
-        res += delim + repr(std::forward<decltype(val)>(val)), delim = ", ";
+        res += delim + repr(val), delim = ", ";
     return std::move(res) + "}";
 }
 template <std::ranges::random_access_range R>
-inline std::string repr(const R &rng)
+inline std::string repr(R &&rng)
 {
     std::string res = "[";
     for (std::string delim = ""; auto &&val : rng)
-        res += delim + repr(std::forward<decltype(val)>(val)), delim = ", ";
+        res += delim + repr(val), delim = ", ";
     return std::move(res) + "]";
 }
 }; // namespace
@@ -99,7 +99,7 @@ void print(std::ostream& os,std::string_view context, auto &&first_arg, auto &&.
         if (context[i] == '{' && i + 1 < context.size() && context[i + 1] == '}')
         {
             os << repr(first_arg);
-            print(os,context.substr(i + 2), std::forward<decltype(args)>(args)...);
+            print(os,context.substr(i + 2),std::forward<decltype(args)>(args)...);
             return;
         }
         os << context[i];
@@ -108,10 +108,6 @@ void print(std::ostream& os,std::string_view context, auto &&first_arg, auto &&.
 }
 void print(std::string_view context, auto &&...args){
     print(std::cout,context,std::forward<decltype(args)>(args)...);
-}
-inline void press_enter_to_continue(){
-    print("press enter to continue.");
-    std::cin.get();
 }
 
 // input from stream

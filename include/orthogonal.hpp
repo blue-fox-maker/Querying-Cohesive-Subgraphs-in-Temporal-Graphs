@@ -1,12 +1,30 @@
+#pragma once
 #include <algorithm>
 #include <array>
-#include <concepts>
-#include <map>
 #include <memory>
 #include <ranges>
 #include <tuple>
 #include <vector>
 #include "seq.hpp"
+#include "func.hpp"
+
+template <std::ranges::range R1, std::ranges::range R2>
+auto kth_element(R1 &&rng1, R2 &&rng2, size_t k)
+{
+    assert(k < std::ranges::size(rng1) + std::ranges::size(rng2));
+    if (std::ranges::size(rng1) == 0)
+        return *(std::ranges::begin(rng2) + k);
+    if (std::ranges::size(rng1) > std::ranges::size(rng2))
+        return kth_element(std::forward<R2>(rng2), std::forward<R1>(rng1), k);
+    if (k == 1)
+        return std::max(*std::ranges::begin(rng1), *std::ranges::begin(rng2));
+    size_t index1 = std::min(std::ranges::size(rng1) - 1, k / 2);
+    size_t index2 = std::min(std::ranges::size(rng2) - 1, k / 2);
+    if (*(std::ranges::begin(rng1) + index1) > *(std::ranges::begin(rng2) + index2))
+        return kth_element(rng1, std::ranges::subrange(std::ranges::begin(rng2) + index2, std::ranges::end(rng2)), k - index2);
+    else
+        return kth_element(std::ranges::subrange(std::ranges::begin(rng1) + index1, std::ranges::end(rng1)), rng2, k - index1);
+}
 
 // #ifdef dynamic
 // implemention
@@ -287,7 +305,7 @@ class AXYBZ_query
     template <std::ranges::input_range R>
     AXYBZ_query(R &&rng)
     {
-        auto data = std::vector<std::pair<point_type, value_type>>(std::ranges::begin(std::forward<R>(rng)), std::ranges::end(std::forward<R>(rng)));
+        auto data = std::vector<std::pair<point_type, value_type>>(std::ranges::begin(rng), std::ranges::end(rng));
         _root = std::make_unique<node>(std::span{data});
     }
     void insert(const point_type &p, const value_type &val)
