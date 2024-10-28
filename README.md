@@ -5,7 +5,7 @@
 Clone the repository and compile the project with `g++`:
 
 ```sh
-g++ -std=c++20 -O2 src/main.cpp -o src/main
+g++ -std=c++20 -O2 src/main.cpp -o main
 ```
 
 ## Run the Program
@@ -13,19 +13,24 @@ g++ -std=c++20 -O2 src/main.cpp -o src/main
 Once compiled, you can run the program using the following command:
 
 ```sh
-./src/main --help
+./main --help
 ```
 
 This will display the help menu:
 
 ```txt
-Usage: main [-h]
+Usage: ./main [--help] [--version] [--num_query VAR] [--ratio VAR...] [--k_ratio VAR...] model file
 
-Pisitional arguments:
-  file          the dataset file
+Positional arguments:
+  model            cc or core
+  file             dataset path
 
 Optional arguments:
-  -n            the number of queries to test
+  -h, --help       shows help message and exits
+  -v, --version    prints version information and exits
+  -n, --num_query  number of test queries [nargs=0..1] [default: 10000]
+  -r, --ratio      ratio for query interval size [nargs: 1 or more]
+  -k, --k_ratio    ratio for k (used in k-core) [nargs: 1 or more]
 ```
 
 ## Dataset

@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     args.add_argument("file").help("dataset path");
     args.add_argument("-n", "--num_query").help("number of test queries").scan<'i', size_t>().default_value(static_cast<size_t>(10000));
     args.add_argument("-r", "--ratio").help("ratio for query interval size").scan<'g',float>().nargs(argparse::nargs_pattern::at_least_one);
-    args.add_argument("-k", "--k_ratio").help("ratio for k").scan<'g',float>().nargs(argparse::nargs_pattern::at_least_one);
+    args.add_argument("-k", "--k_ratio").help("ratio for k (used in k-core)").scan<'g',float>().nargs(argparse::nargs_pattern::at_least_one);
     args.parse_args(argc, argv);
     const auto model = args.get<std::string>("model");
     const auto file = std::filesystem::path{args.get<std::string>("file")};
