@@ -53,7 +53,6 @@ class Graph
 
     unordered_map<int, int> *cd_;
 
-    // core_t_[u][k] bala bala...
     vector<vector<pair<int, int>>> *core_t_{};
 
     bool *v_a_;

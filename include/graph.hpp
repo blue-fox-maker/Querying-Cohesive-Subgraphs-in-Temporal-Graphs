@@ -52,11 +52,10 @@ edge(size_t, size_t, T&&)->edge<T>;
 template <typename EA, typename WProj = std::identity> 
 class minimum_spanning_forest {
   std::vector<target_edge<EA>> _data;
-  std::vector<size_t> _depth; // this array is useless. I need to get rid of it
+  std::vector<size_t> _depth; // this array is useless.
 public:
   size_t num_vert() const noexcept { return _data.size(); }
-  auto edges() const noexcept { return std::views::iota(0U,num_vert())|std::views::transform([this](size_t i){return edge{i,_data[i].target,std::ref(_data[i].attr)};});}
-  auto edges() noexcept { return std::views::iota(0U,num_vert())|std::views::transform([this](size_t i){return edge{i,_data[i].target,std::ref(_data[i].attr)};});}
+  auto edges() const noexcept { return std::views::iota(0U,num_vert())|std::views::transform([this](size_t i){return edge{i,_data[i].target,_data[i].attr};});}
   template <std::ranges::range R = std::ranges::empty_view<edge<EA>>>
   minimum_spanning_forest(size_t num_vert, R&& rng = {}):_data(num_vert),_depth(num_vert,0){
     for(size_t i = 0; i < _data.size(); i++ ) _data[i] = target_edge<EA>{i};

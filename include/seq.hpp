@@ -1,8 +1,6 @@
-// sequence algorithm on span
 #pragma once
 #include <span>
 
-// preorder tree view on span
 template <typename T>
 class tree_view
 {

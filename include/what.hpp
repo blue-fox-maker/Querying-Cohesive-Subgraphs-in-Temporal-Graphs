@@ -18,18 +18,15 @@ inline auto test_cc(std::filesystem::path file, size_t num_query, const std::vec
     ifs >> num_time >> num_vert >> raw_data;
     ::print("load graph with {} verts and {} edges in [0, {}]", num_vert, raw_data.size(), num_time);
     auto index = bench([&]{
-        auto msf = minimum_spanning_forest<int>{num_vert};
+        auto tsf = minimum_spanning_forest<int>{num_vert};
         auto points = std::map<std::array<int,2>, std::vector<edge<>>>{};
-        for(auto iter = raw_data.begin(); iter != raw_data.end(); iter++) {
-            auto u = std::get<0>(*iter);
-        }
         for(auto [u,v,t]:raw_data){
-            if(auto i = msf.add_edge(u,v,t);i){
-                auto e = msf.edges()[*i];
+            if(auto i = tsf.add_edge(u,v,t);i){
+                auto e = tsf.edges()[*i];
                 points[{e.attr,t-1}].emplace_back(e.source,e.target);
             }
         }
-        for(auto [u,v,t]:msf.edges())
+        for(auto [u,v,t]:tsf.edges())
             points[{t,std::numeric_limits<int>::max()}].emplace_back(u,v);
         return ekkusubiwai<int,std::vector<edge<>>>{points};
     }, "construct index");
