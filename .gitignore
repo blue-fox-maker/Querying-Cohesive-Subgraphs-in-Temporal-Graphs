@@ -1,2 +1,4 @@
 src/main
+main
 *.bak
+.vscode

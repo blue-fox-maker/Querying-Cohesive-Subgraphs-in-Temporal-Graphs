@@ -16,11 +16,13 @@ inline auto test_cc(std::filesystem::path file, size_t num_query, const std::vec
     size_t num_time, num_vert;
     std::vector<std::tuple<size_t, size_t, int>> raw_data;
     ifs >> num_time >> num_vert >> raw_data;
-    print("load graph with {} verts and {} edges in [0, {}]", num_vert, raw_data.size(), num_time);
-
+    ::print("load graph with {} verts and {} edges in [0, {}]", num_vert, raw_data.size(), num_time);
     auto index = bench([&]{
         auto msf = minimum_spanning_forest<int>{num_vert};
         auto points = std::map<std::array<int,2>, std::vector<edge<>>>{};
+        for(auto iter = raw_data.begin(); iter != raw_data.end(); iter++) {
+            auto u = std::get<0>(*iter);
+        }
         for(auto [u,v,t]:raw_data){
             if(auto i = msf.add_edge(u,v,t);i){
                 auto e = msf.edges()[*i];
@@ -29,11 +31,11 @@ inline auto test_cc(std::filesystem::path file, size_t num_query, const std::vec
         }
         for(auto [u,v,t]:msf.edges())
             points[{t,std::numeric_limits<int>::max()}].emplace_back(u,v);
-        return AXBY_query<int,std::vector<edge<>>>{points};
+        return ekkusubiwai<int,std::vector<edge<>>>{points};
     }, "construct index");
 
     for(auto ratio: ratios){
-      print("[ratio = {}]", ratio);
+      ::print("[ratio = {}]", ratio);
       auto queries = std::vector<std::pair<int,int>>(num_query);
       auto random_engine = std::default_random_engine(std::random_device{}());
       size_t length = ratio * num_time;
@@ -59,11 +61,11 @@ inline auto test_core(std::filesystem::path file ,size_t num_query, const std::v
     std::vector<std::tuple<size_t, size_t, int>> raw_data;
     ifs >> num_time >> num_vert >> raw_data;
     std::ranges::sort(raw_data);
-    print("load graph of {} verts, {} edges, in [0, {})", num_vert, raw_data.size(), num_time);
+    ::print("load graph of {} verts, {} edges, in [0, {})", num_vert, raw_data.size(), num_time);
     auto phc = Graph{file.string()};
     auto indexes = bench([&]{
         phc.index();
-        auto index = std::vector<AXYBZ_query<int,std::vector<size_t>>>{};
+        auto index = std::vector<ekkusuwaibizetto<int,std::vector<size_t>>>{};
         for(size_t k = 2; k < phc.k_max_; k++)
         {
           auto points = std::map<std::array<int, 3>, std::vector<size_t>>{};
@@ -79,7 +81,7 @@ inline auto test_core(std::filesystem::path file ,size_t num_query, const std::v
     }, "construct index");
     for(auto k_ratio: k_ratios){
       size_t k = phc.k_max_*k_ratio;
-      print("[k = {}]", k);
+      ::print("[k = {}]", k);
       auto& index = indexes[k-2];
       for (auto ratio : ratios)
       {

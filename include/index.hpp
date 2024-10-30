@@ -36,3 +36,20 @@ private:
   std::vector<navi> _data;
   entry_type _entry;
 };
+
+auto kth_element(const auto &rng1, const auto &rng2, auto k)
+{
+    assert(k < std::ranges::size(rng1) + std::ranges::size(rng2));
+    if (std::ranges::size(rng1) == 0)
+        return *(std::ranges::begin(rng2) + k);
+    if (std::ranges::size(rng1) > std::ranges::size(rng2))
+        return kth_element(rng2, rng1, k);
+    if (k == 1)
+        return std::max(*std::ranges::begin(rng1), *std::ranges::begin(rng2));
+    auto index1 = std::min(std::ranges::size(rng1) - 1, k / 2);
+    auto index2 = std::min(std::ranges::size(rng2) - 1, k / 2);
+    if (*(std::ranges::begin(rng1) + index1) > *(std::ranges::begin(rng2) + index2))
+        return kth_element(rng1, std::ranges::subrange(std::ranges::begin(rng2) + index2, std::ranges::end(rng2)), k - index2);
+    else
+        return kth_element(std::ranges::subrange(std::ranges::begin(rng1) + index1, std::ranges::end(rng1)), rng2, k - index1);
+}
