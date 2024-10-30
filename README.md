@@ -5,7 +5,7 @@
 Clone the repository and compile the project with `g++`:
 
 ```sh
-g++ -std=c++20 -O2 src/main.cpp -o main
+g++ -std=c++20 -O3 src/main.cpp -o main
 ```
 
 ## Run the Program
@@ -38,8 +38,8 @@ For example:
 # test cc with 10,000 queries and query interval sizes of 30% and 40% t_max:
 ./main cc data/contact.data -n 10000 -r 0.3 0.4
 
-# test core with 50 queries, query interval size of 10%, 20% and 30% of t_max and k values of 30% and 80% of k_max:
-./main core data/contact.data -n 50 -r 0.1 0.2 0.3 -k 0.3 0.8
+# test core with 5,000 queries, query interval size of 10%, 20% and 30% of t_max and k values of 30% and 80% of k_max:
+./main core data/contact.data -n 5000 -r 0.1 0.2 0.3 -k 0.3 0.8
 ```
 
 ## Dataset

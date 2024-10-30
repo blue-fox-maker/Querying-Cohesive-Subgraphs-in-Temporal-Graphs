@@ -178,8 +178,8 @@ Graph::~Graph()
 
 void Graph::load(const string &path)
 {
-    printf("Graph path: %s\n", path.c_str());
-    printf("Loading Graph\n");
+    // printf("Graph path: %s\n", path.c_str());
+    // printf("Loading Graph\n");
 
     ifstream ifs(path);
     if (!ifs.is_open())
@@ -261,16 +261,16 @@ void Graph::load(const string &path)
 
     init_nbr_cnt();
 
-    printf("n = %d, m = %d, effective_m = %d, max_deg = %d, max_effective_deg = %d.\n", n_, m_, effective_m_, max_deg_, max_effective_deg_);
-    printf("span = %d.\n", t_);
+    // printf("n = %d, m = %d, effective_m = %d, max_deg = %d, max_effective_deg = %d.\n", n_, m_, effective_m_, max_deg_, max_effective_deg_);
+    // printf("span = %d.\n", t_);
 
     if (log_f_ != nullptr)
     {
-        fprintf(log_f_, "n = %d, m = %d, effective_m = %d, max_deg = %d, max_effective_deg = %d.\n", n_, m_, effective_m_, max_deg_, max_effective_deg_);
-        fprintf(log_f_, "span = %d.\n", t_);
+        // fprintf(log_f_, "n = %d, m = %d, effective_m = %d, max_deg = %d, max_effective_deg = %d.\n", n_, m_, effective_m_, max_deg_, max_effective_deg_);
+        // fprintf(log_f_, "span = %d.\n", t_);
     }
 
-    print_graph_size();
+    // print_graph_size();
 
     if (v_a_ == nullptr)
         v_a_ = new bool[n_];
@@ -335,7 +335,7 @@ void Graph::index()
     if (v_b_ == nullptr)
         v_b_ = new bool[n_];
 
-    printf("starting core decomposition...\n");
+    // printf("starting core decomposition...\n");
     //    compute core number for all edges
     core_decomposition();
     for (int u = 0; u < n_; ++u)
@@ -344,9 +344,9 @@ void Graph::index()
         v_b_[u] = false;
         core_t_[u].resize(core_[u] + 1);
     }
-    printf("k_max = %d\n", k_max_);
+    // printf("k_max = %d\n", k_max_);
 
-    printf("initialize core time.\n");
+    // printf("initialize core time.\n");
     compute_core_deg(0);
     init_core_time();
 
@@ -354,7 +354,7 @@ void Graph::index()
     queue<int> q;
     for (int k = min_k_; k <= k_max_; ++k)
     {
-        printf("Iteration k = %d.\n", k);
+        // printf("Iteration k = %d.\n", k);
         init_ct_cnt(k);
 
         for (int t_s = 1; t_s < t_; ++t_s)
@@ -490,29 +490,28 @@ void Graph::index()
             }
         }
     }
-    std::cout << "what is this: " << core_t_->size() << std::endl;
 
 #ifdef _LINUX_
     gettimeofday(&t_end, NULL);
     long long t_msec = (t_end.tv_sec - t_start.tv_sec) * 1000 + (t_end.tv_usec - t_start.tv_usec) / 1000;
-    printf("Running time: %lld s, %lld mins\n", t_msec / 1000, t_msec / 1000 / 60);
-    if (log_f_ != nullptr)
-        fprintf(log_f_, "Indexing time: %lld s\n", t_msec / 1000);
+    // printf("Running time: %lld s, %lld mins\n", t_msec / 1000, t_msec / 1000 / 60);
+    // if (log_f_ != nullptr)
+        // fprintf(log_f_, "Indexing time: %lld s\n", t_msec / 1000);
 
     struct rusage rUsage;
     getrusage(RUSAGE_SELF, &rUsage);
     long ms = rUsage.ru_maxrss;
-    printf("Memory usage = %ldKB, %.2fMB, %.2fGB\n", ms, (float)ms / 1024, (float)ms / 1024 / 1024);
-    if (log_f_ != nullptr)
-        fprintf(log_f_, "Memory usage = %ldKB, %.2fMB, %.2fGB\n", ms, (float)ms / 1024, (float)ms / 1024 / 1024);
+    // printf("Memory usage = %ldKB, %.2fMB, %.2fGB\n", ms, (float)ms / 1024, (float)ms / 1024 / 1024);
+    // if (log_f_ != nullptr)
+        // fprintf(log_f_, "Memory usage = %ldKB, %.2fMB, %.2fGB\n", ms, (float)ms / 1024, (float)ms / 1024 / 1024);
 #else
     clock_t end = clock();
-    printf("Running time: %.2f s, %.2f min\n", (double)(end - start) / CLOCKS_PER_SEC, (double)(end - start) / CLOCKS_PER_SEC / 60);
+    // printf("Running time: %.2f s, %.2f min\n", (double)(end - start) / CLOCKS_PER_SEC, (double)(end - start) / CLOCKS_PER_SEC / 60);
 
 #endif
-    if (log_f_ != nullptr)
-        fprintf(log_f_, "kmax = %d\n", k_max_);
-    print_idx_size();
+    // if (log_f_ != nullptr)
+        // fprintf(log_f_, "kmax = %d\n", k_max_);
+//     print_idx_size();
 }
 
 // core decomposition for all edges
@@ -770,16 +769,16 @@ void Graph::test()
 
     for (int u = 0; u < 20; ++u)
     {
-        printf("vertex %d:\n", u);
+        // printf("vertex %d:\n", u);
 
         for (int k = min_k_; k < core_t_[u].size(); ++k)
         {
-            printf("k=%d:\n", k);
-            for (auto &i : core_t_[u][k])
-                printf("[%d,%d], ", i.first, i.second);
-            printf("\n");
+//             // printf("k=%d:\n", k);
+            // for (auto &i : core_t_[u][k])
+//                 // printf("[%d,%d], ", i.first, i.second);
+//             // printf("\n");
         }
-        printf("\n");
+//         // printf("\n");
     }
 
     //    auto fp = fopen(R"(C:\Users\DW\Desktop\idx\email-b)","rb");
@@ -790,12 +789,12 @@ void Graph::test()
     //    for (int u = 0; u < n_; ++u) {
     //        int cs;
     //        fread(&cs,sizeof(int),1,fp);
-    //        if (cs != core_t_[u].size()) printf("neq %d\n",u);
+//     //        if (cs != core_t_[u].size()) printf("neq %d\n",u);
     //
     //        for (int k = min_k_; k < cs; ++k) {
     //            int ccs;
     //            fread(&ccs,sizeof(int),1,fp);
-    //            if (ccs != core_t_[u][k].size()) printf("neq ccs %d[%d]\n",u,k);
+//     //            if (ccs != core_t_[u][k].size()) printf("neq ccs %d[%d]\n",u,k);
     //            for (int i = 0; i < ccs; ++i) {
     //                int a,b;
     //                fread(&a,sizeof(int),1,fp);
@@ -810,7 +809,7 @@ void Graph::test()
 void Graph::print_idx_size()
 {
     // if (idx_size_ != 0)
-    //     printf("Index size: %lld MB.", idx_size_ / 1024 / 1024);
+//     //     printf("Index size: %lld MB.", idx_size_ / 1024 / 1024);
     idx_size_=0;
 
     idx_size_ += sizeof(int);
@@ -834,18 +833,18 @@ void Graph::print_idx_size()
         average_t_d += core_t_[u].size() - min_k_;
     }
 
-    printf("Index size: %.2f MB.\n", (float)idx_size_ / 1024 / 1024);
-    printf("Average T = %.2f, max T = %d.\n", average_t / average_t_d, max_t);
+//     printf("Index size: %.2f MB.\n", (float)idx_size_ / 1024 / 1024);
+//     printf("Average T = %.2f, max T = %d.\n", average_t / average_t_d, max_t);
 
-    if (log_f_ != nullptr)
-        fprintf(log_f_, "Index size: %.2f MB\n", (float)idx_size_ / 1024 / 1024);
-    if (log_f_ != nullptr)
-        fprintf(log_f_, "Average T = %.2f, max T = %d.\n", average_t / average_t_d, max_t);
+    // if (log_f_ != nullptr)
+//         fprintf(log_f_, "Index size: %.2f MB\n", (float)idx_size_ / 1024 / 1024);
+    // if (log_f_ != nullptr)
+//         fprintf(log_f_, "Average T = %.2f, max T = %d.\n", average_t / average_t_d, max_t);
 }
 
 void Graph::print_graph_size()
 {
-    printf("Graph size: %.2f MB.\n", (float)edges_.size() * 3 * sizeof(int) / 1024 / 1024);
+//     printf("Graph size: %.2f MB.\n", (float)edges_.size() * 3 * sizeof(int) / 1024 / 1024);
 }
 
 bool Graph::query(int u, int t_s, int t_e, int k)
@@ -854,7 +853,7 @@ bool Graph::query(int u, int t_s, int t_e, int k)
         return false;
     if (k < 2)
     {
-        printf("Enter a parameter larger than 1\n");
+//         printf("Enter a parameter larger than 1\n");
         return false;
     }
     auto it = upper_bound(core_t_[u][k].begin(), core_t_[u][k].end(), make_pair(t_s, t_e), cmp);
@@ -941,7 +940,7 @@ void Graph::index_baseline()
         core_t_ = new vector<vector<pair<int, int>>>[n_];
     else
     {
-        printf("Index structure exists!\n");
+//         printf("Index structure exists!\n");
         exit(1);
     }
     if (t_offset_ == nullptr)
@@ -961,7 +960,7 @@ void Graph::index_baseline()
     {
 
         if (t_s % 100 == 0)
-            printf("t = %d.\n", t_s);
+//             printf("t = %d.\n", t_s);
 
         //        for (int i = edges_idx_[t_s-1]; i < edges_idx_[t_s]; ++i) {
         //            int u = edges_[i].first;
@@ -985,23 +984,23 @@ void Graph::index_baseline()
 #ifdef _LINUX_
     gettimeofday(&t_end, NULL);
     long long t_msec = (t_end.tv_sec - t_start.tv_sec) * 1000 + (t_end.tv_usec - t_start.tv_usec) / 1000;
-    printf("Running time (baseline): %lld s, %lld mins\n", t_msec / 1000, t_msec / 1000 / 60);
-    if (log_f_ != nullptr)
-        fprintf(log_f_, "Indexing time (Baseline): %lld s\n", t_msec / 1000);
+//     printf("Running time (baseline): %lld s, %lld mins\n", t_msec / 1000, t_msec / 1000 / 60);
+    // if (log_f_ != nullptr)
+//         fprintf(log_f_, "Indexing time (Baseline): %lld s\n", t_msec / 1000);
 
     struct rusage rUsage;
     getrusage(RUSAGE_SELF, &rUsage);
     long ms = rUsage.ru_maxrss;
-    printf("Memory usage = %ldKB, %.2fMB, %.2fGB\n", ms, (float)ms / 1024, (float)ms / 1024 / 1024);
-    if (log_f_ != nullptr)
-        fprintf(log_f_, "Memory usage = %ldKB, %.2fMB, %.2fGB\n", ms, (float)ms / 1024, (float)ms / 1024 / 1024);
+//     printf("Memory usage = %ldKB, %.2fMB, %.2fGB\n", ms, (float)ms / 1024, (float)ms / 1024 / 1024);
+    // if (log_f_ != nullptr)
+//         fprintf(log_f_, "Memory usage = %ldKB, %.2fMB, %.2fGB\n", ms, (float)ms / 1024, (float)ms / 1024 / 1024);
 
 #else
     clock_t end = clock();
-    printf("Running time (baseline): %.2f s, %.2f min\n", (double)(end - start) / CLOCKS_PER_SEC, (double)(end - start) / CLOCKS_PER_SEC / 60);
+//     printf("Running time (baseline): %.2f s, %.2f min\n", (double)(end - start) / CLOCKS_PER_SEC, (double)(end - start) / CLOCKS_PER_SEC / 60);
 #endif
 
-    print_idx_size();
+//     print_idx_size();
 }
 
 void Graph::compute_core_time_bl(const int &t_s)
@@ -1530,7 +1529,7 @@ void Graph::naive_index()
     for (int t_s = 0; t_s < t_; ++t_s)
     {
         if (t_s % 100 == 0)
-            printf("t_s = %d\n", t_s);
+//             printf("t_s = %d\n", t_s);
         for (int t_e = t_s; t_e < t_; ++t_e)
         {
             online_core_decomposition(t_s, t_e);
@@ -1541,15 +1540,15 @@ void Graph::naive_index()
 #ifdef _LINUX_
     gettimeofday(&t_end, NULL);
     long long t_msec = (t_end.tv_sec - t_start.tv_sec) * 1000 + (t_end.tv_usec - t_start.tv_usec) / 1000;
-    printf("Running time (Naive Index): %lld s, %lld mins\n", t_msec / 1000, t_msec / 1000 / 60);
-    if (log_f_ != nullptr)
-        fprintf(log_f_, "Indexing time (Naive Index): %lld s\n", t_msec / 1000);
+//     printf("Running time (Naive Index): %lld s, %lld mins\n", t_msec / 1000, t_msec / 1000 / 60);
+    // if (log_f_ != nullptr)
+//         fprintf(log_f_, "Indexing time (Naive Index): %lld s\n", t_msec / 1000);
 #else
     clock_t end = clock();
-    printf("Running time (naive index): %.2f s, %.2f min\n", (double)(end - start) / CLOCKS_PER_SEC, (double)(end - start) / CLOCKS_PER_SEC / 60);
+//     printf("Running time (naive index): %.2f s, %.2f min\n", (double)(end - start) / CLOCKS_PER_SEC, (double)(end - start) / CLOCKS_PER_SEC / 60);
 #endif
 
-    printf("Index size: %.2f MB.\n", (float)idx_size / 1024 / 1024);
+//     printf("Index size: %.2f MB.\n", (float)idx_size / 1024 / 1024);
 }
 
 void Graph::query_init()
@@ -1622,9 +1621,9 @@ void Graph::query_subgraph(int u, int t_s, int t_e, int k, vector<int> &r, vecto
 void Graph::init_log(const string &log_path)
 {
     log_f_ = fopen(log_path.c_str(), "a");
-    fprintf(log_f_, "\n\n==================\n");
+//     fprintf(log_f_, "\n\n==================\n");
     time_t now = time(0);
-    fprintf(log_f_, "%s\n", ctime(&now));
+//     fprintf(log_f_, "%s\n", ctime(&now));
 }
 
 int Graph::query_all(int t_s, int t_e, int k)
@@ -1645,7 +1644,7 @@ void Graph::naive_index_size()
 
     for (int t_s = 0; t_s < t_; ++t_s)
     {
-        //        if (t_s % 100 == 0) printf("t_s = %d\n",t_s);
+//         //        if (t_s % 100 == 0) printf("t_s = %d\n",t_s);
         for (int t_e = t_s; t_e < t_; ++t_e)
         {
             //            online_core_decomposition(t_s,t_e);
@@ -1653,9 +1652,9 @@ void Graph::naive_index_size()
         }
     }
 
-    printf("Index size (Naive Index): %.2f MB.\n", (float)idx_size / 1024 / 1024);
-    if (log_f_ != nullptr)
-        fprintf(log_f_, "Index size (Naive Index): %.2f MB.\n", (float)idx_size / 1024 / 1024);
+//     printf("Index size (Naive Index): %.2f MB.\n", (float)idx_size / 1024 / 1024);
+    // if (log_f_ != nullptr)
+//         fprintf(log_f_, "Index size (Naive Index): %.2f MB.\n", (float)idx_size / 1024 / 1024);
 }
 
 int Graph::online_k_core(const int &t_s, const int &t_e, const int &k)

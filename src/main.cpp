@@ -1,16 +1,8 @@
-#include <algorithm>
 #include <filesystem>
 #include <format>
-#include <fstream>
-#include <limits>
-#include <random>
 #include <cassert>
-#include <ranges>
 #include <stdexcept>
 #include "../include/argparse.hpp"
-#include "../include/console.hpp"
-#include "../include/orthogonal.hpp"
-#include "../include/graph.hpp"
 #include "../include/what.hpp"
 
 int main(int argc, char *argv[])
