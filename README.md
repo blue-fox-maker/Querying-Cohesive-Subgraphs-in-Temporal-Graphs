@@ -33,6 +33,15 @@ Optional arguments:
   -k, --k_ratio    ratio for k (used in k-core) [nargs: 1 or more]
 ```
 
+For example:
+```sh
+# test cc with 10,000 queries and query interval sizes of 30% and 40% t_max:
+./main cc data/contact.data -n 10000 -r 0.3 0.4
+
+# test core with 50 queries, query interval size of 10%, 20% and 30% of t_max and k values of 30% and 80% of k_max:
+./main core data/contact.data -n 50 -r 0.1 0.2 0.3 -k 0.3 0.8
+```
+
 ## Dataset
 
 Datasets should be placed in the `data/` directory with `.data` extension.
