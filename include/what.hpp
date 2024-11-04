@@ -16,9 +16,9 @@ inline auto test_cc(std::filesystem::path file, size_t num_query, const std::vec
     size_t num_time, num_vert;
     std::vector<std::tuple<size_t, size_t, int>> raw_data;
     ifs >> num_time >> num_vert >> raw_data;
-    ::print("load graph with {} verts and {} edges in [0, {}]", num_vert, raw_data.size(), num_time);
+    ::print("load graph with {} verts and {} edges in [0, {})", num_vert, raw_data.size(), num_time);
     auto index = bench([&]{
-        auto tsf = minimum_spanning_forest<int>{num_vert};
+        auto tsf = saisho_zenyu_mori<int>{num_vert};
         auto points = std::map<std::array<int,2>, std::vector<edge<>>>{};
         for(auto [u,v,t]:raw_data){
             if(auto i = tsf.add_edge(u,v,t);i){
@@ -58,7 +58,7 @@ inline auto test_core(std::filesystem::path file ,size_t num_query, const std::v
     std::vector<std::tuple<size_t, size_t, int>> raw_data;
     ifs >> num_time >> num_vert >> raw_data;
     std::ranges::sort(raw_data);
-    ::print("load graph of {} verts, {} edges, in [0, {})", num_vert, raw_data.size(), num_time);
+    ::print("load graph with {} verts and {} edges in [0, {})", num_vert, raw_data.size(), num_time);
     auto phc = Graph{file.string()};
     auto indexes = bench([&]{
         phc.index();
